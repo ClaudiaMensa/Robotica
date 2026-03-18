@@ -1,1 +1,695 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jornada da Robótica: Do Brincar ao Pensar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Fredoka+One&display=swap');
+        
+        :root {
+            --primary: #4f46e5;
+        }
 
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .kids-font {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        .section-content {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .section-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .sidebar-item.active {
+            background-color: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        .robot-bounce {
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        #turtle {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -24px;
+            margin-top: -24px;
+            z-index: 10;
+        }
+
+        .command-line {
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .idea-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 10px;
+        }
+
+        /* Estilos Acadêmicos Section 7 */
+        .academic-paper {
+            background: white;
+            padding: 3rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            font-family: 'Inter', serif;
+        }
+        .math-block {
+            background: #f1f5f9;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            font-family: "Courier New", Courier, monospace;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row min-h-screen">
+
+    <!-- Cabeçalho Mobile -->
+    <div class="md:hidden bg-indigo-600 text-white p-4 flex justify-between items-center">
+        <h1 class="font-bold">Mundo da Robótica</h1>
+        <button onclick="toggleSidebar()" class="text-2xl"><i class="fas fa-bars"></i></button>
+    </div>
+
+    <!-- Barra Lateral (Menu) -->
+    <aside id="sidebar" class="fixed inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-200 ease-in-out z-30 w-72 bg-white border-r border-slate-200 p-6 flex flex-col">
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-indigo-600 flex items-center gap-2">
+                <i class="fas fa-robot"></i> RoboEdu
+            </h2>
+            <p class="text-xs text-slate-500 mt-1 uppercase tracking-widest">Níveis de Aprendizado</p>
+        </div>
+
+        <nav class="space-y-2 flex-grow overflow-y-auto">
+            <button onclick="showSection('step-1')" class="sidebar-item w-full text-left p-3 rounded-xl hover:bg-slate-100 flex items-center gap-3 active">
+                <span class="bg-yellow-100 text-yellow-600 w-8 h-8 rounded-lg flex items-center justify-center font-bold">1</span>
+                <div>
+                    <p class="text-sm font-semibold">Primeiros Passos</p>
+                    <p class="text-xs opacity-70">Nível Inicial</p>
+                </div>
+            </button>
+
+            <button onclick="showSection('step-2')" class="sidebar-item w-full text-left p-3 rounded-xl hover:bg-slate-100 flex items-center gap-3">
+                <span class="bg-orange-100 text-orange-600 w-8 h-8 rounded-lg flex items-center justify-center font-bold">2</span>
+                <div>
+                    <p class="text-sm font-semibold">Pequenos Criadores</p>
+                    <p class="text-xs opacity-70">Anatomia e Materiais</p>
+                </div>
+            </button>
+
+            <button onclick="showSection('step-3')" class="sidebar-item w-full text-left p-3 rounded-xl hover:bg-slate-100 flex items-center gap-3">
+                <span class="bg-green-100 text-green-600 w-8 h-8 rounded-lg flex items-center justify-center font-bold">3</span>
+                <div>
+                    <p class="text-sm font-semibold">Exploradores</p>
+                    <p class="text-xs opacity-70">O Cérebro Eletrônico</p>
+                </div>
+            </button>
+
+            <button onclick="showSection('step-4')" class="sidebar-item w-full text-left p-3 rounded-xl hover:bg-slate-100 flex items-center gap-3">
+                <span class="bg-blue-100 text-blue-600 w-8 h-8 rounded-lg flex items-center justify-center font-bold">4</span>
+                <div>
+                    <p class="text-sm font-semibold">Inventores</p>
+                    <p class="text-xs opacity-70">Laboratório de Ideias</p>
+                </div>
+            </button>
+
+            <button onclick="showSection('step-logic')" class="sidebar-item w-full text-left p-3 rounded-xl hover:bg-slate-100 flex items-center gap-3">
+                <span class="bg-cyan-100 text-cyan-600 w-8 h-8 rounded-lg flex items-center justify-center font-bold">5</span>
+                <div>
+                    <p class="text-sm font-semibold">Lógica e Algoritmos</p>
+                    <p class="text-xs opacity-70">Comandos da Tartaruga</p>
+                </div>
+            </button>
+
+            <button onclick="showSection('step-5')" class="sidebar-item w-full text-left p-3 rounded-xl hover:bg-slate-100 flex items-center gap-3">
+                <span class="bg-purple-100 text-purple-600 w-8 h-8 rounded-lg flex items-center justify-center font-bold">6</span>
+                <div>
+                    <p class="text-sm font-semibold">Criptógrafos e Devs</p>
+                    <p class="text-xs opacity-70">Avançado</p>
+                </div>
+            </button>
+
+            <button onclick="showSection('step-6')" class="sidebar-item w-full text-left p-3 rounded-xl hover:bg-slate-100 flex items-center gap-3">
+                <span class="bg-slate-100 text-slate-600 w-8 h-8 rounded-lg flex items-center justify-center font-bold">7</span>
+                <div>
+                    <p class="text-sm font-semibold">Academia & Ciência</p>
+                    <p class="text-xs opacity-70">Nível Superior</p>
+                </div>
+            </button>
+        </nav>
+
+        <div class="mt-auto pt-6 border-t border-slate-100">
+            <p class="text-[10px] text-slate-400 text-center">© 2026 - Plataforma Educacional de Robótica</p>
+        </div>
+    </aside>
+
+    <!-- Conteúdo Principal -->
+    <main class="flex-grow p-4 md:p-12 overflow-y-auto max-h-screen">
+        
+        <!-- SECÇÃO 1 - FIXA -->
+        <section id="step-1" class="section-content active">
+            <div class="max-w-3xl mx-auto text-center">
+                <span class="text-6xl robot-bounce inline-block mb-4">🤖</span>
+                <h1 class="kids-font text-4xl text-yellow-500 mb-6">O Mundo das Coisas que se Mexem!</h1>
+                <p class="text-xl text-slate-600 mb-8">Olá, amiguinho! Você sabia que podemos criar amigos de metal que dançam e rolam?</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border-2 border-yellow-200">
+                        <div class="text-4xl mb-2">⚙️</div>
+                        <h3 class="kids-font text-xl mb-2">As Engrenagens</h3>
+                        <p class="text-sm text-slate-500">São como dentes que se abraçam para fazer tudo girar!</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border-2 border-blue-200">
+                        <div class="text-4xl mb-2">🔋</div>
+                        <h3 class="kids-font text-xl mb-2">A Comidinha</h3>
+                        <p class="text-sm text-slate-500">Os robôs não comem feijão, eles usam pilhas para ter força!</p>
+                    </div>
+                </div>
+
+                <div class="mt-12 bg-yellow-50 p-8 rounded-3xl border-dashed border-2 border-yellow-300 mb-12">
+                    <h3 class="kids-font text-2xl mb-4 text-yellow-700">Desafio do Dia!</h3>
+                    <p class="text-lg">Tente encontrar na sua casa algo que tenha rodinhas. Isso é o começo de um robô!</p>
+                </div>
+
+                <div class="text-left bg-white p-8 rounded-3xl shadow-md border border-slate-100">
+                    <h3 class="kids-font text-2xl mb-6 text-indigo-600 flex items-center gap-2">
+                        <i class="fas fa-search"></i> Missões de Descoberta
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex gap-4 items-start p-4 bg-slate-50 rounded-2xl">
+                            <span class="text-2xl">🪟</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800">A Cortina Mágica</h4>
+                                <p class="text-sm text-slate-500">Puxe a cordinha de uma persiana. Como ela sabe que deve subir? Procure uma pecinha redonda (polia) lá no alto!</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start p-4 bg-slate-50 rounded-2xl">
+                            <span class="text-2xl">🏎️</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800">O Carrinho Veloz</h4>
+                                <p class="text-sm text-slate-500">Onde o carrinho anda mais rápido: no tapete ou no chão liso? Isso ensina sobre atrito!</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start p-4 bg-slate-50 rounded-2xl">
+                            <span class="text-2xl">🤐</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800">O Segredo do Zíper</h4>
+                                <p class="text-sm text-slate-500">Veja como os dentes se encaixam. Robôs usam mecanismos parecidos para fechar mãos!</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start p-4 bg-slate-50 rounded-2xl">
+                            <span class="text-2xl">✂️</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800">A Força da Tesoura</h4>
+                                <p class="text-sm text-slate-500">Veja o parafuso no meio. É um ponto de apoio (alavanca). Braços de robôs funcionam assim!</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 items-start p-4 bg-slate-50 rounded-2xl">
+                            <span class="text-2xl">📎</span>
+                            <div>
+                                <h4 class="font-bold text-slate-800">O Pulo do Pregador</h4>
+                                <p class="text-sm text-slate-500">O arame enrolado guarda força. Robôs usam molas para saltar e agarrar!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECÇÃO 2 (Anatomia e Materiais) - RESTAURADA -->
+        <section id="step-2" class="section-content">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-orange-500 text-white p-8 rounded-3xl mb-8 flex items-center justify-between shadow-lg">
+                    <div>
+                        <h1 class="kids-font text-3xl mb-2">Pequenos Criadores</h1>
+                        <p class="opacity-90">Anatomia do robô e escolha de materiais.</p>
+                    </div>
+                    <span class="text-6xl">🏗️</span>
+                </div>
+
+                <div class="prose prose-slate max-w-none mb-12">
+                    <h2 class="text-2xl font-bold text-orange-600 mb-6 text-center">A Anatomia do Robô</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                        <div class="bg-white p-6 rounded-2xl text-center border-b-8 border-orange-400 shadow-sm">
+                            <span class="text-4xl block mb-2">👀</span>
+                            <p class="font-bold text-slate-800">Sensores</p>
+                            <p class="text-xs text-slate-500 italic">"Para sentir o mundo ao redor"</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl text-center border-b-8 border-orange-400 shadow-sm">
+                            <span class="text-4xl block mb-2">🧠</span>
+                            <p class="font-bold text-slate-800">Cérebro</p>
+                            <p class="text-xs text-slate-500 italic">"Para tomar todas as decisões"</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl text-center border-b-8 border-orange-400 shadow-sm">
+                            <span class="text-4xl block mb-2">🦾</span>
+                            <p class="font-bold text-slate-800">Atuadores</p>
+                            <p class="text-xs text-slate-500 italic">"Para criar movimentos reais"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-12">
+                    <h2 class="text-2xl font-bold text-orange-600 mb-6">Materiais de Construção</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border-2 border-orange-50 flex gap-4">
+                            <div class="text-4xl">📦</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Papelão e Recicláveis</h4>
+                                <p class="text-sm text-slate-500">Leve, barato e perfeito para as primeiras ideias!</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border-2 border-blue-50 flex gap-4">
+                            <div class="text-4xl">🧱</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Plásticos e Blocos</h4>
+                                <p class="text-sm text-slate-500">Como o Lego, são resistentes e fáceis de encaixar.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border-2 border-slate-100 flex gap-4">
+                            <div class="text-4xl">🖇️</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Alumínio e Metais</h4>
+                                <p class="text-sm text-slate-500">Super fortes, usados em robôs espaciais e fábricas.</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border-2 border-green-50 flex gap-4">
+                            <div class="text-4xl">🌳</div>
+                            <div>
+                                <h4 class="font-bold text-slate-800">Madeira</h4>
+                                <p class="text-sm text-slate-500">Oferece uma estrutura firme e muito duradoura.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <h2 class="text-2xl font-bold text-orange-600 mb-6 text-left">Descobertas na sua Casa</h2>
+                    <div class="bg-orange-50 p-6 rounded-2xl border-l-4 border-orange-400 shadow-sm text-left">
+                        <h4 class="font-bold text-orange-900 flex items-center gap-2"><i class="fas fa-door-open"></i> Articulação</h4>
+                        <p class="text-sm text-slate-700 mt-1">A dobradiça da porta funciona como o cotovelo ou joelho de um robô.</p>
+                    </div>
+                    <div class="bg-orange-50 p-6 rounded-2xl border-l-4 border-orange-400 shadow-sm text-left">
+                        <h4 class="font-bold text-orange-900 flex items-center gap-2"><i class="fas fa-toggle-on"></i> Sensores de Toque</h4>
+                        <p class="text-sm text-slate-700 mt-1">O interruptor de luz é o sensor mais básico: ligado ou desligado.</p>
+                    </div>
+                    <div class="bg-orange-50 p-6 rounded-2xl border-l-4 border-orange-400 shadow-sm text-left">
+                        <h4 class="font-bold text-orange-900 flex items-center gap-2"><i class="fas fa-bicycle"></i> Transmissão de Força</h4>
+                        <p class="text-sm text-slate-700 mt-1">A corrente da bike leva a força do seu pé para a roda. Robôs fazem o mesmo com engrenagens!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECÇÃO 3 - EXPLORADORES - RESTAURADA COM PROVOCAÇÃO -->
+        <section id="step-3" class="section-content">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-green-600 text-white p-8 rounded-3xl mb-8 flex items-center gap-6 shadow-lg">
+                    <span class="text-6xl">🧠</span>
+                    <div>
+                        <h1 class="text-3xl font-bold mb-2">O Mistério do Cérebro Eletrônico</h1>
+                        <p class="opacity-90">Como um chip minúsculo consegue "pensar"?</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-t-8 border-green-500 text-left">
+                        <h3 class="font-bold text-xl mb-4 text-green-800">Chip vs. Cérebro Humano</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-4">
+                            Enquanto nós usamos química e impulsos biológicos, o robô usa eletricidade pura passando por milhões de portinhas de metal chamadas transistores.
+                        </p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-t-8 border-green-500 text-center">
+                        <h3 class="font-bold text-xl mb-4 text-green-800">Grande Calculadora</h3>
+                        <p class="text-slate-600 text-sm mb-4">Tudo vira número no cérebro do robô. Ele faz milhões de contas por segundo!</p>
+                        <p class="font-mono text-green-600 font-bold text-lg tracking-widest bg-slate-100 p-2 rounded">01001011 1101</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 text-white p-10 rounded-3xl shadow-2xl relative overflow-hidden text-left mb-8">
+                    <h3 class="kids-font text-2xl mb-6 text-green-400">Hora de Questionar!</h3>
+                    <div class="space-y-6">
+                        <div class="border-l-4 border-green-400 pl-4">
+                            <h4 class="font-bold text-lg mb-1 text-green-200">Consciência?</h4>
+                            <p class="text-slate-400 text-sm">Se o robô se ver no espelho, ele sabe que é ele ou acha que é outro robô?</p>
+                        </div>
+                        <div class="border-l-4 border-green-400 pl-4">
+                            <h4 class="font-bold text-lg mb-1 text-green-200">Personalidade?</h4>
+                            <p class="text-slate-400 text-sm">Se programarmos um robô para ser "teimoso", isso é o seu jeito ou apenas uma regra matemática?</p>
+                        </div>
+                        <div class="border-l-4 border-green-400 pl-4">
+                            <h4 class="font-bold text-lg mb-1 text-green-200">Aprender Sozinho?</h4>
+                            <p class="text-slate-400 text-sm">O seu cérebro aprende que o fogo queima. Como o cérebro de um robô poderia aprender a não bater na parede sem que ninguém escrevesse isso no código dele? Isso se chama <em>Machine Learning</em>!</p>
+                        </div>
+                        <div class="border-l-4 border-green-400 pl-4">
+                            <h4 class="font-bold text-lg mb-1 text-green-200">Sentimentos?</h4>
+                            <p class="text-slate-400 text-sm">Um robô pode sentir alegria ao terminar uma tarefa ou ele apenas para de gastar bateria?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- A PROVOCAÇÃO FINAL (RESTAURADA) -->
+                <div class="mt-8 p-8 bg-green-100 rounded-3xl border-2 border-dashed border-green-300 flex items-center gap-6">
+                    <span class="text-5xl">🔬</span>
+                    <div>
+                        <h4 class="font-bold text-green-900 text-lg mb-2">Desafio de Exploração Mental:</h4>
+                        <p class="text-green-800 leading-relaxed italic">
+                            Se você pudesse dar um <strong>superpoder</strong> ao cérebro de um robô, qual seria? Você escolheria que ele pudesse prever o futuro para evitar acidentes ou que ele entendesse todas as línguas do mundo para conversar com qualquer pessoa?
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECÇÃO 4 - INVENTORES - RESTAURADA -->
+        <section id="step-4" class="section-content">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-10">
+                    <h1 class="kids-font text-4xl text-blue-700 mb-4">Laboratório de Ideias</h1>
+                    <p class="text-slate-600 text-lg">Onde os problemas do mundo se transformam em super invenções!</p>
+                </div>
+
+                <div class="bg-white p-8 rounded-3xl shadow-sm border-2 border-blue-100 mb-10 text-left">
+                    <h3 class="kids-font text-2xl text-blue-600 mb-6 text-center">Como nasce uma Invenção?</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+                        <div class="space-y-2 p-2"><div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto font-bold text-xl">1</div><h4 class="font-bold text-sm uppercase">Observar</h4></div>
+                        <div class="space-y-2 p-2"><div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center mx-auto font-bold text-xl">2</div><h4 class="font-bold text-sm uppercase">Imaginar</h4></div>
+                        <div class="space-y-2 p-2"><div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mx-auto font-bold text-xl">3</div><h4 class="font-bold text-sm uppercase">Desenhar</h4></div>
+                        <div class="space-y-2 p-2"><div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto font-bold text-xl">4</div><h4 class="font-bold text-sm uppercase">Criar</h4></div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10 text-left">
+                    <div class="idea-card bg-white p-6 rounded-2xl shadow-sm border-b-8 border-yellow-400 transition duration-300">
+                        <div class="text-3xl mb-4">👵 🌻</div>
+                        <h4 class="font-bold mb-2 text-slate-800 text-sm">Ajudando a Vovó</h4>
+                        <p class="text-[10px] text-slate-600 mb-4 leading-relaxed">Como você criaria um robô para regar plantas que ficam bem no alto sem deixá-las cair?</p>
+                        <span class="text-[9px] bg-yellow-50 px-2 py-1 rounded text-yellow-700 font-bold uppercase">Mecânica</span>
+                    </div>
+                    <div class="idea-card bg-white p-6 rounded-2xl shadow-sm border-b-8 border-blue-400 transition duration-300">
+                        <div class="text-3xl mb-4">🧸 🧹</div>
+                        <h4 class="font-bold mb-2 text-slate-800 text-sm">Quarto Mágico</h4>
+                        <p class="text-[10px] text-slate-600 mb-4 leading-relaxed">Como seria um robô que identifica os brinquedos jogados e os coloca na caixa sozinho?</p>
+                        <span class="text-[9px] bg-blue-50 px-2 py-1 rounded text-blue-700 font-bold uppercase">Visão</span>
+                    </div>
+                    <div class="idea-card bg-white p-6 rounded-2xl shadow-sm border-b-8 border-green-400 transition duration-300">
+                        <div class="text-3xl mb-4">🐶 🥣</div>
+                        <h4 class="font-bold mb-2 text-slate-800 text-sm">Pet Feliz</h4>
+                        <p class="text-[10px] text-slate-600 mb-4 leading-relaxed">E se um robô colocasse comida pro seu pet e ainda brincasse de correr com ele?</p>
+                        <span class="text-[9px] bg-green-50 px-2 py-1 rounded text-green-700 font-bold uppercase">Interação</span>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-900 text-white p-8 rounded-3xl shadow-xl mb-10 text-left relative overflow-hidden">
+                    <h3 class="kids-font text-2xl mb-8 text-indigo-300 text-center">Missão Futuro: O que VOCÊ inventaria?</h3>
+                    <div class="space-y-4">
+                        <div class="bg-indigo-800/40 p-4 rounded-xl border border-indigo-700">
+                            <h4 class="font-bold text-indigo-200 mb-1 text-sm">🌊 Limpeza dos Oceanos</h4>
+                            <p class="text-xs opacity-80">Como seu robô poderia nadar e identificar o que é lixo plástico?</p>
+                        </div>
+                        <div class="bg-indigo-800/40 p-4 rounded-xl border border-indigo-700">
+                            <h4 class="font-bold text-indigo-200 mb-1 text-sm">🦯 Guia para todos</h4>
+                            <p class="text-xs opacity-80">Como ajudar uma pessoa que não enxerga a caminhar sozinha avisando sobre degraus?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-8 rounded-3xl border-2 border-dashed border-blue-200 text-left">
+                    <h4 class="font-bold text-blue-900 mb-6 text-center text-lg uppercase tracking-widest">Dicionário do Inventor</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-blue-100">
+                            <h5 class="font-bold text-blue-600 mb-2 flex items-center gap-2"><i class="fas fa-sync-alt"></i> Feedback</h5>
+                            <p class="text-xs text-slate-600">É quando o robô verifica se o trabalho está pronto. Exemplo: "O pote já encheu? Sim! Então paro de colocar comida."</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-xl shadow-sm border border-blue-100">
+                            <h5 class="font-bold text-blue-600 mb-2 flex items-center gap-2"><i class="fas fa-hammer"></i> Prototipagem</h5>
+                            <p class="text-xs text-slate-600">Criar uma versão de testes com papelão e fita antes de fazer o robô real.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECÇÃO 5 - FIXA -->
+        <section id="step-logic" class="section-content">
+            <div class="max-w-4xl mx-auto">
+                <h1 class="text-3xl font-bold text-cyan-600 mb-2 text-center">A Linguagem das Máquinas</h1>
+                <p class="text-slate-500 mb-8 text-center text-sm italic">Comande a tartaruga e veja o código aparecer!</p>
+
+                <!-- Painel de Comandos em Linha Única -->
+                <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-wrap items-center justify-center gap-2">
+                    <button onclick="addTurtleCommand('frente', 5)" class="bg-cyan-500 text-white px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase hover:bg-cyan-600 transition shadow-sm active:scale-95 flex items-center gap-2">
+                        <i class="fas fa-arrow-up"></i> Frente (+5)
+                    </button>
+                    <button onclick="addTurtleCommand('ré', -5)" class="bg-slate-700 text-white px-3 py-1.5 rounded-lg font-bold text-[10px] uppercase hover:bg-slate-800 transition shadow-sm active:scale-95 flex items-center gap-2">
+                        <i class="fas fa-arrow-down"></i> Ré (-5)
+                    </button>
+                    <div class="w-px h-5 bg-slate-200 mx-1"></div>
+                    <button onclick="addTurtleCommand('vire', 90)" class="bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-blue-200 transition active:scale-95">90°</button>
+                    <button onclick="addTurtleCommand('vire', 180)" class="bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-blue-200 transition active:scale-95">180°</button>
+                    <button onclick="addTurtleCommand('vire', 270)" class="bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg font-bold text-[10px] hover:bg-blue-200 transition active:scale-95">270°</button>
+                </div>
+
+                <div class="flex flex-col gap-6">
+                    <!-- Área de Simulação (Topo) -->
+                    <div class="bg-slate-200 rounded-[40px] h-[350px] relative overflow-hidden border-8 border-white shadow-xl flex items-center justify-center">
+                        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 20px 20px;"></div>
+                        <div id="turtle" class="text-5xl drop-shadow-xl select-none">🐢</div>
+                        <p class="absolute bottom-4 left-6 text-[8px] text-slate-400 font-bold uppercase tracking-widest">Área de Simulação</p>
+                    </div>
+
+                    <!-- Terminal de Código (Embaixo) -->
+                    <div class="flex flex-col gap-4">
+                        <div class="bg-slate-900 rounded-3xl p-6 shadow-2xl border-4 border-slate-800 relative text-left">
+                            <div class="flex justify-between items-center mb-4">
+                                <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Terminal de Algoritmo</h4>
+                                <div class="flex gap-2">
+                                    <button onclick="clearTurtle()" class="text-[8px] bg-red-500/20 text-red-400 px-2 py-1 rounded hover:bg-red-500/40 transition font-bold uppercase">Limpar tudo</button>
+                                </div>
+                            </div>
+                            <div id="code-display" class="font-mono text-xs h-[120px] overflow-y-auto space-y-1 custom-scrollbar text-cyan-400">
+                                <p class="text-slate-600 italic">// Aguardando comandos dos botões acima...</p>
+                            </div>
+                        </div>
+
+                        <button onclick="runTurtleSequence()" class="bg-indigo-600 text-white py-4 rounded-2xl font-bold text-sm hover:bg-indigo-700 transition shadow-lg flex items-center justify-center gap-3 active:scale-95 uppercase tracking-wider">
+                            <i class="fas fa-play-circle text-lg"></i> Replay da Sequência Completa
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECÇÃO 6 (Programação Real) - RESTAURADA -->
+        <section id="step-5" class="section-content">
+            <div class="max-w-4xl mx-auto">
+                <header class="text-center mb-12">
+                    <h1 class="text-4xl font-bold text-purple-700 mb-4">Programação Real e Plataformas</h1>
+                    <p class="text-slate-600">Onde a imaginação encontra as ferramentas profissionais de criação.</p>
+                </header>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 mb-12 text-left">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-orange-400">
+                        <h3 class="font-bold text-orange-700 mb-2">Scratch (MIT)</h3>
+                        <p class="text-xs text-slate-500 mb-4">Programação visual em blocos onde você cria histórias e jogos.</p>
+                        <a href="https://scratch.mit.edu" target="_blank" class="text-xs font-bold text-orange-500 underline">Explorar</a>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-cyan-400">
+                        <h3 class="font-bold text-cyan-700 mb-2">Tinkercad Circuits</h3>
+                        <p class="text-xs text-slate-500 mb-4">Simulador 3D de circuitos de Arduino sem medo de queimar componentes.</p>
+                        <a href="https://www.tinkercad.com" target="_blank" class="text-xs font-bold text-cyan-500 underline">Abrir</a>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-red-500">
+                        <h3 class="font-bold text-red-700 mb-2">Lego Mindstorms</h3>
+                        <p class="text-xs text-slate-500 mb-4">Robótica física com motores reais programados via blocos ou Python.</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-8 border-green-500">
+                        <h3 class="font-bold text-green-700 mb-2">Micro:bit</h3>
+                        <p class="text-xs text-slate-500 mb-4">Pequeno computador de bolso com sensores integrados para projetos vestíveis.</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 rounded-3xl p-8 shadow-2xl border-4 border-slate-800 mb-12 text-left">
+                    <h3 class="text-purple-400 font-bold mb-4 flex items-center gap-2"><i class="fas fa-terminal"></i> Linguagens Profissionais</h3>
+                    <div class="space-y-4 text-sm text-slate-300 font-mono">
+                        <div class="border-b border-slate-800 pb-2"><span class="text-yellow-400 font-bold">C++ / Arduino:</span> Extremamente rápida e direta ao hardware.</div>
+                        <div class="border-b border-slate-800 pb-2"><span class="text-blue-400 font-bold">Python / ROS:</span> O padrão da IA e da robótica autônoma.</div>
+                        <div><span class="text-pink-400 font-bold">JavaScript:</span> Controle via Bluetooth ou interfaces web modernas.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECÇÃO 7 (Nível Superior) - ACADÊMICO REVISADO -->
+        <section id="step-6" class="section-content">
+            <div class="max-w-5xl mx-auto academic-paper">
+                <header class="border-b-4 border-slate-800 pb-8 mb-12 text-left">
+                    <h1 class="text-4xl font-serif font-bold text-slate-900">Fundamentos Teóricos da Robótica e Engenharia de Sistemas Ciber-Físicos</h1>
+                    <p class="text-slate-500 mt-4 italic">Uma abordagem analítica sobre cinemática, dinâmica e inteligência robótica.</p>
+                </header>
+
+                <div class="space-y-12 text-slate-800 leading-relaxed text-justify">
+                    
+                    <article>
+                        <h2 class="text-2xl font-bold mb-4 text-indigo-900">1. Introdução aos Sistemas Robóticos</h2>
+                        <p>
+                            A robótica acadêmica define-se como o estudo interdisciplinar de sistemas que integram percepção, processamento e ação. Diferente da automação convencional, a robótica moderna lida com a incerteza do ambiente através de modelos probabilísticos e sistemas ciber-físicos ($CPS$).
+                        </p>
+                    </article>
+
+                    <article>
+                        <h2 class="text-2xl font-bold mb-4 text-indigo-900">2. Cinemática de Manipuladores</h2>
+                        <p>
+                            A cinemática estuda o movimento do robô sem considerar as forças que o produzem. A descrição geométrica de uma cadeia cinemática utiliza as **Matrizes de Transformação Homogênea** baseadas nos parâmetros de Denavit-Hartenberg (D-H).
+                        </p>
+                        <div class="math-block text-center">
+                            $$^{0}T_{n} = \prod_{i=1}^{n} ^{i-1}T_{i}(q_i)$$
+                            <p class="text-[10px] mt-2 text-slate-500">Onde $q_i$ representa a variável da junta (angular ou prismática).</p>
+                        </div>
+                    </article>
+
+                    <article>
+                        <h2 class="text-2xl font-bold mb-4 text-indigo-900">3. Dinâmica e Controle</h2>
+                        <p>
+                            O modelo matemático mais comum para descrever o comportamento dinâmico de um braço robótico é o de **Euler-Lagrange**:
+                        </p>
+                        <div class="math-block text-center">
+                            $$M(q)\ddot{q} + C(q, \dot{q})\dot{q} + g(q) = \tau$$
+                        </div>
+                        <p>
+                            Para controle do movimento, utilizamos sistemas de **Controle PID** (Proporcional-Integral-Derivativo).
+                        </p>
+                    </article>
+
+                    <article class="bg-slate-50 p-8 rounded-2xl border-2 border-slate-200 text-left">
+                        <h2 class="text-xl font-bold mb-6 flex items-center gap-2"><i class="fas fa-book"></i> Referências Bibliográficas Fundamentais</h2>
+                        <ul class="space-y-4 text-sm font-serif italic">
+                            <li class="pl-4 border-l-4 border-indigo-500">
+                                <strong>SICILIANO, Bruno; KHATIB, Oussama.</strong> <em>Springer Handbook of Robotics</em>. 2nd ed. Springer, 2016.
+                            </li>
+                            <li class="pl-4 border-l-4 border-indigo-500">
+                                <strong>CRAIG, John J.</strong> <em>Introduction to Robotics: Mechanics and Control</em>. 4th ed. Pearson, 2017.
+                            </li>
+                            <li class="pl-4 border-l-4 border-indigo-500">
+                                <strong>THRUN, Sebastian; BURGARD, Wolfram; FOX, Dieter.</strong> <em>Probabilistic Robotics</em>. MIT Press, 2005.
+                            </li>
+                        </ul>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            const btn = Array.from(document.querySelectorAll('.sidebar-item')).find(b => b.getAttribute('onclick').includes(id));
+            if (btn) btn.classList.add('active');
+            if (window.innerWidth < 768) toggleSidebar();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('-translate-x-full');
+        }
+
+        // --- Lógica Nível 5 ---
+        let currentCommands = [];
+        let tX = 0, tY = 0, tR = -90; // Começa em -90 para a "cabeça" apontar para cima
+        const turtle = document.getElementById('turtle');
+        const display = document.getElementById('code-display');
+
+        function updateTurtle() {
+            turtle.style.transform = `translate(${tX}px, ${tY}px) rotate(${tR}deg) scaleX(-1)`;
+        }
+
+        function addTurtleCommand(type, value) {
+            if (currentCommands.length === 0) display.innerHTML = '';
+            currentCommands.push({type, value});
+            
+            const line = document.createElement('p');
+            line.className = 'command-line';
+            line.innerHTML = `<span class="text-indigo-400 font-bold">${type}</span>(<span class="text-yellow-400">${value}</span>);`;
+            display.appendChild(line);
+            display.scrollTop = display.scrollHeight;
+            
+            executeCommand({type, value});
+        }
+
+        function executeCommand(cmd) {
+            if (cmd.type === 'frente' || cmd.type === 'ré') {
+                const rad = tR * (Math.PI / 180);
+                tX += Math.cos(rad) * cmd.value;
+                tY += Math.sin(rad) * cmd.value;
+            } else if (cmd.type === 'vire') {
+                tR += cmd.value;
+            }
+            updateTurtle();
+        }
+
+        function runTurtleSequence() {
+            tX = 0; tY = 0; tR = -90; updateTurtle();
+            if (currentCommands.length === 0) return;
+            
+            let i = 0;
+            const run = () => {
+                if (i < currentCommands.length) {
+                    executeCommand(currentCommands[i++]);
+                    setTimeout(run, 400);
+                }
+            };
+            setTimeout(run, 400);
+        }
+
+        function clearTurtle() {
+            currentCommands = []; tX = 0; tY = 0; tR = -90; updateTurtle();
+            display.innerHTML = '<p class="text-slate-600 italic">// Aguardando comandos dos botões acima...</p>';
+        }
+
+        window.onload = updateTurtle;
+    </script>
+</body>
+</html>
